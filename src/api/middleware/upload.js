@@ -16,3 +16,5 @@ const storage = new GridFsStorage(
         }
     }
 );
+
+//export default upload;

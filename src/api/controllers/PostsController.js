@@ -82,31 +82,33 @@ class PostsController {
   
     async editPost(req, res) {
         try {
-//            const userId = req.user._id;
-//            const { postId, photo, title, content, text } = req.body;
-//            const post = await PostModel.find({ _id: postId });
-//      
-//            if (userId != post.creatorId) {
-//              res.json({ message: "This post does not belong to this user" });
-//            }
-//      
-//            if (!post) {
-//              return res.status(403).json({ message: "Post does not exist"});
-//            }
-//      
+            const postId = req.params.id;
+            const userId = req.user._id;
+            const { photo, title, content, text } = req.body;
+            const post = await PostModel.findById(postId);
+
+            if (!post) {
+                return res.json({ message: "Post does not exist" });
+            }
+
+           if (userId != post.creatorId) {
+             return res.json({ message: "This user is not a creator of the requested post" });
+           }
+      
 //            //change the post
-//            if (!title) {
-//              res.json({ message: 'Title cannot be empty' });
-//            }
+           if (!title) {
+                return res.json({ message: 'Title cannot be empty' });
+           }
 //      
 //            post.photo = photo;
-//            post.title = title;
-//            post.content = content;
-//            post.save();
-//      
-//            res.json({ post });
+           post.title = title;
+           post.text = text;
+           post.save();
+      
+           res.json({ post, message: "Post successfully edited" });
         } catch (err) {
-            console.log('Error during post editing');
+            console.log('Error during post editing', err);
+            res.json({ message: "Error during post editing" });
         }
     }
   
