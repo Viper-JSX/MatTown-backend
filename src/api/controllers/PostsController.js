@@ -96,18 +96,12 @@ class PostsController {
              return res.json({ message: "This user is not a creator of the requested post" });
            }
       
-//            //change the post
            if (!title) {
                 return res.json({ message: 'Title cannot be empty' });
            }
-//      
-//            post.photo = photo;
+
 
            const updatedPost = await PostModel.findOneAndUpdate({ _id: postId }, { title, text }, { returnOriginal: false });
-           //post.updateOne({ title, text });
-        //    post.title = title;
-        //    post.text = text;
-        //    post.save();
       
            res.json({ post: updatedPost, message: "Post successfully edited" });
         } catch (err) {
