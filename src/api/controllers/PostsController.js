@@ -38,6 +38,7 @@ class PostsController {
   
     async getRecommendedPosts(req, res) {
         try {
+            const userId = {}
             res.json({ message: "Get recommended posts" });
             //const userId = req.user._id;
             //const user = await PostModel.findOne({ _id: userId });
@@ -101,11 +102,14 @@ class PostsController {
            }
 //      
 //            post.photo = photo;
-           post.title = title;
-           post.text = text;
-           post.save();
+
+           const updatedPost = await PostModel.findOneAndUpdate({ _id: postId }, { title, text }, { returnOriginal: false });
+           //post.updateOne({ title, text });
+        //    post.title = title;
+        //    post.text = text;
+        //    post.save();
       
-           res.json({ post, message: "Post successfully edited" });
+           res.json({ post: updatedPost, message: "Post successfully edited" });
         } catch (err) {
             console.log('Error during post editing', err);
             res.json({ message: "Error during post editing" });
