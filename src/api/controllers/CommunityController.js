@@ -1,3 +1,4 @@
+import CommunityModel from "../models/CommunityModel.js";
 import PostModel from "../models/PostModel.js";
 
 class CommunityController {
@@ -6,11 +7,15 @@ class CommunityController {
     async create(req, res) {
         try {
             const { userId } = req.user;
+            const { image, name, description } = req.body;
             console.log("Creating community");
 
-            res.status(200).json({ message: "Community has been created" });
-        } catch (err) {
+            const community = await CommunityModel.create({ name, description, owner: userId });
 
+            res.status(200).json({ community, message: "Community has been created" });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ message: "Error when creating community" });
         }
     }
   
@@ -19,7 +24,8 @@ class CommunityController {
     }
     
     async getPosts(req, res) {
-        const { step, page } = req.body ;
+        const { id } = req.params;
+        const { step, page } = req.body;
     }  
   
     async createPost(req, res) {
