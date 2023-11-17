@@ -8,7 +8,16 @@ class CommunityController {
         try {
             const { userId } = req.user;
             const { image, name, description } = req.body;
-            console.log("Creating community");
+
+            if (!name) {
+                return res.status(422).json({ message: "Community name is required" });
+            }
+
+            const nameAlreadyUsed = await CommunityModel.countDocuments({ name }) > 0;
+
+            if (nameAlreadyUsed) {
+                return res.status(422).json({ message: "Community with this name already exists" });
+            }
 
             const community = await CommunityModel.create({ name, description, owner: userId });
 
@@ -19,8 +28,51 @@ class CommunityController {
         }
     }
   
+    async edit(req, res) {
+        try {
+            const { userId } = req.user;
+            const { id } = req.params;
+            const { name, image, description } = req.body;
+            const community = await CommunityModel.findById(id);
+          
+            if (!community) {
+              return res.status(404).json({ message: "Community with given id does not exist" });
+            }
+          
+            if (community.owner.toString() !== userId) { //user is not owner of this community
+              return res.status(403).json({ message: "User is not owner of this community" }); // Forbidden
+            }
+          
+            const updatedCommunity = await CommunityModel.findOneAndUpdate({ _id: id }, { name, /*image,*/ description }, { returnOriginal: false });
+            res.status(200).json({ updatedCommunity, message: "Community has been successfully updated" });
+          
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({ message: "Error occured during updating community" })
+          }
+    }
+
     async delete(req, res) {
-        const { userId } = req.user;
+        try {
+            const { userId } = req.user;
+            const { id } = req.params;
+          
+            const community = await CommunityModel.findById(id);
+          
+            if (!community) {
+              return res.status(404).json({ message: "Community with given id does not exist" });
+            }
+
+            if (community.owner.toString() !== userId) { //user is not owner of this community
+              return res.status(403).json({ message: "User isnot owner of this community" }); // 403 or 401 - forbidden
+            }
+          
+            const result = await CommunityModel.deleteOne({ _id: id });
+
+            res.status(200).json({ message: "Community successfully deleted" });
+          } catch (err) {
+            res.status(500).json({ message: "Error when deleting a community" });
+          }
     }
     
     async getPosts(req, res) {
