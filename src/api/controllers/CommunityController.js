@@ -87,15 +87,16 @@ class CommunityController {
     
             const { title, text, photo } = req.body;
       
-            if(!title) {
-                res.status(400).json({ message: "Title is required" });
+            if (!title) {
+                return res.status(400).json({ message: "Title is required" });
             }
             
-            const newPost = await PostModel.create({  title, text, photo, userId });
-            const community = findOneAndUpdate({ _id: communityId }, { $push: { posts: newPost._id }});
+            const newPost = await PostModel.create({  title, text, /*photo */ userId });
+            const community = await CommunityModel.findOneAndUpdate({ _id: communityId }, { $push: { posts: newPost._id }});
             
-            res.status(200).json({ post: newPost, message: "Post successfully created" })
+            res.status(200).json({ community, post: newPost, message: "Post successfully created" })
         } catch(err) {
+            console.log(err);
             res.status(500).json({ message: "Error when creating post" });      
         }
     }
