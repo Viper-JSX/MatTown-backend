@@ -84,17 +84,23 @@ class CommunityController {
         try {
             const { userId } = req.user;
             const communityId = req.params.id;
-    
             const { title, text, photo } = req.body;
-      
+            const communityOwnerId = await CommunityModel.findById( communityId, { owner: 1 });
+
+            console.log(userId, communityOwnerId.owner.toString());
+
+            if (userId !== communityOwnerId.owner.toString()) {
+                return res.status(403).json({ message: "User is not owner of this community. Please, contact the creator of this community to make changes you want" });
+            }
+
             if (!title) {
-                return res.status(400).json({ message: "Title is required" });
+                return res.status(422).json({ message: "Title is required" });
             }
             
             const newPost = await PostModel.create({  title, text, /*photo */ userId });
-            const community = await CommunityModel.findOneAndUpdate({ _id: communityId }, { $push: { posts: newPost._id }});
+            const updatedCommunity = await CommunityModel.findOneAndUpdate({ _id: communityId }, { $push: { posts: newPost._id }});
             
-            res.status(200).json({ community, post: newPost, message: "Post successfully created" })
+            res.status(200).json({ community: updatedCommunity, post: newPost, message: "Post successfully created" })
         } catch(err) {
             console.log(err);
             res.status(500).json({ message: "Error when creating post" });      
