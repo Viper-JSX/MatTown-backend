@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose"
 
 const PostSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: 'User' }, 
+    communityId: { type: Schema.Types.ObjectId, ref: "Community", default: null },
     title: { type: String, default: "" },
     text: { type: String, default: "" },
     likes: { type: [Schema.ObjectId], default: [] },
