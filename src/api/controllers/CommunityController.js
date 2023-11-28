@@ -87,8 +87,6 @@ class CommunityController {
             const { title, text, photo } = req.body;
             const communityOwnerId = await CommunityModel.findById( communityId, { owner: 1 });
 
-            console.log(userId, communityOwnerId.owner.toString());
-
             if (userId !== communityOwnerId.owner.toString()) {
                 return res.status(403).json({ message: "User is not owner of this community. Please, contact the creator of this community to make changes you want" });
             }
@@ -135,7 +133,7 @@ class CommunityController {
       
             res.status(200).json({ community, message: "Member successfully removed" })
         } catch (err) {
-            res.status(500).json({ message: "Ertor when adding a member to community" });
+            res.status(500).json({ message: "Erкor when adding a member to community" });
         }
     }
 }

@@ -26,13 +26,13 @@ class AuthController {
                 return res.status(200).json({ user, token });
             }
 
-            return res.status(400).send("Invalid Credentials");
+            return res.status(422).send("Invalid data");
         }
         
 
         catch (err) { 
             console.log("Error during sign-in");
-            res.json({ message: "Error during sign-in" });
+            res.status(500).json({ message: "Error during sign-in" });
          }
     }
 
@@ -61,11 +61,11 @@ class AuthController {
                 }
             );
 
-            res.send({ message: "Sign-up successful", user: newUser, token });
+            res.status(200).json({ message: "Sign-up successful", user: newUser, token });
 
         } catch (err) {
             console.log("Error during sign-up", err);
-            res.send({ message: "Sign-up failed" });
+            res.status(500).send({ message: "Sign-up failed" });
         }
         
     }
@@ -90,10 +90,10 @@ class AuthController {
                 return res.status(404).json({message: 'Error during authorize. Invalid token'});
             }
           
-            res.send({ user });
+            res.status(200).json({ user, message: "Authorized successfully" });
         } catch (err) {
           console.log(err);
-          return res.status(404).json({message: 'Error during authorize. Invalid token'});
+          return res.status(500).json({message: 'Error during authorization'});
         }
     }
 }

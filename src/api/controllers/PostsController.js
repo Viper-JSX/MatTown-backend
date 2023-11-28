@@ -89,24 +89,24 @@ class PostsController {
             const post = await PostModel.findById(postId);
 
             if (!post) {
-                return res.json({ message: "Post does not exist" });
+                return res.status(404).json({ message: "Post does not exist" });
             }
 
            if (userId != post.creatorId) {
-             return res.json({ message: "This user is not a creator of the requested post" });
+             return res.status(403).json({ message: "This user is not a creator of the requested post" });
            }
       
            if (!title) {
-                return res.json({ message: 'Title cannot be empty' });
+                return res.status(422).json({ message: 'Title cannot be empty' });
            }
 
 
            const updatedPost = await PostModel.findOneAndUpdate({ _id: postId }, { title, text }, { returnOriginal: false });
       
-           res.json({ post: updatedPost, message: "Post successfully edited" });
+           res.status(200).json({ post: updatedPost, message: "Post successfully edited" });
         } catch (err) {
             console.log('Error during post editing', err);
-            res.json({ message: "Error during post editing" });
+            res.status(500).json({ message: "Error during post editing" });
         }
     }
   
@@ -125,11 +125,11 @@ class PostsController {
             if (post.userId.toString() !== userId) { //user is not a creator of given post
                 return res.json({ message: "Current user is not a creator of this post" });
             }
-//      
+      
             const result = await PostModel.deleteOne({ _id: postId });
-            res.json({ message: "Post has been deleted" });
+            res.status(200).json({ message: "Post has been deleted" });
         } catch (err) {
-            res.json({ message: "Error during post delete" });
+            res.status(500).json({ message: "Error during post delete" });
             console.log("Error during post delete", err);
         }
     }
@@ -149,14 +149,14 @@ class PostsController {
             post.likes.splice(post.likes.indexOf(userId), 1);
             post.likesCount -= 1;
             await post.save();
-            return res.json({ message: "Post has been unliked", post });
+            return res.status(200).json({ message: "Post has been unliked", post });
         }
 
         post.likes.push(userId);
         post.likesCount += 1;
         await post.save();
 
-        return res.json({ message: "Post has been liked", post });
+        return res.status(200).json({ message: "Post has been liked", post });
     }
 
 
