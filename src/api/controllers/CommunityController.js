@@ -99,7 +99,7 @@ class CommunityController {
                 return res.status(422).json({ message: "Title is required" });
             }
             
-            const newPost = await PostModel.create({  title, text, /*photo */ userId });
+            const newPost = await PostModel.create({ userId, communityId, title, text, /*photo */  });
             const updatedCommunity = await CommunityModel.findOneAndUpdate({ _id: communityId }, { $push: { posts: newPost._id }});
             
             res.status(200).json({ community: updatedCommunity, post: newPost, message: "Post successfully created" })
