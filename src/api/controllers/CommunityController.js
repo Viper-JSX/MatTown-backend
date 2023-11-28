@@ -43,6 +43,10 @@ class CommunityController {
               return res.status(403).json({ message: "User is not owner of this community" }); // Forbidden
             }
           
+            if (!name) {
+                return res.status(422).json({ message: "Community name is required" });
+            }
+
             const updatedCommunity = await CommunityModel.findOneAndUpdate({ _id: id }, { name, /*image,*/ description }, { returnOriginal: false });
             res.status(200).json({ updatedCommunity, message: "Community has been successfully updated" });
           
