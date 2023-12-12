@@ -17,9 +17,11 @@ class AuthController {
         
             const user = await UserModel.findOne({ email });
 
-            console.log(password, user.passwordHash)
+            console.log("Comparing", password, user.passwordHash);
+            const comparedPasswords = await bcrypt.compare(password, user.passwordHash); //convert password to string
+            console.log(comparedPasswords);
 
-            if (user && (await bcrypt.compare(Object.toString(password), user.passwordHash))) {
+            if (user && comparedPasswords) {
                 const token = generateAccessToken(
                     { 
                         userId: user._id, 
@@ -29,7 +31,7 @@ class AuthController {
                 return res.status(200).json({ user, token });
             }
 
-            return res.status(403).json({ message: "Wrong login or password" }); //Add status code
+            return res.status(403).json({ message: "Wrong email or password" }); //Add status code
         }
         
 
