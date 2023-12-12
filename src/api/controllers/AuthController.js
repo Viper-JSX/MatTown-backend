@@ -29,7 +29,7 @@ class AuthController {
                 return res.status(200).json({ user, token });
             }
 
-            return res.status(422).send("Invalid data");
+            return res.status(403).json({ message: "Wrong login or password" }); //Add status code
         }
         
 
