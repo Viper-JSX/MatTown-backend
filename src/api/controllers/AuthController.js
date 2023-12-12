@@ -47,14 +47,13 @@ class AuthController {
             const { firstname, lastname, email, password } = req.body;
             
             if (!firstname || !lastname || !email || !password) { // If some of input data is missing
-                return res.send({ message: "All inputs are required" });
+                return res.status(422).json({ message: "All inputs are required" });
             }
 
             let existingUser = await UserModel.findOne({ email });
-            //console.log("FOund users", existingUser);
 
             if (existingUser) {
-                return res.status(403).send({ message: "User with such email already exists" });
+                return res.status(403).json({ message: "User with such email already exists" });
             }
 
             const passwordHash = await bcrypt.hash(password, 2);
@@ -70,7 +69,7 @@ class AuthController {
 
         } catch (err) {
             console.log("Error during sign-up", err);
-            res.status(500).send({ message: "Sign-up failed" });
+            res.status(500).json({ message: "Sign-up failed" });
         }
         
     }
