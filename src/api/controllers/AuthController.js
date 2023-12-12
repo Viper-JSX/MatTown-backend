@@ -16,10 +16,7 @@ class AuthController {
             }
         
             const user = await UserModel.findOne({ email });
-
-            console.log("Comparing", password, user.passwordHash);
             const comparedPasswords = await bcrypt.compare(password, user.passwordHash); //convert password to string
-            console.log(comparedPasswords);
 
             if (user && comparedPasswords) {
                 const token = generateAccessToken(
@@ -36,7 +33,6 @@ class AuthController {
         
 
         catch (err) { 
-            console.log("Error during sign-in", err);
             res.status(500).json({ message: "Error during sign-in" });
          }
     }
@@ -51,6 +47,8 @@ class AuthController {
             }
 
             let existingUser = await UserModel.findOne({ email });
+
+            console.log("Existing user", existingUser)
 
             if (existingUser) {
                 return res.status(403).json({ message: "User with such email already exists" });
