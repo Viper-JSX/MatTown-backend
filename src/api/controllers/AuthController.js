@@ -9,14 +9,17 @@ class AuthController {
         try {        
             const { email, password } = req.body;
         
+            console.log(email, password);
+
             if (!(email && password)) {
-              return res.status(400).send("All input is required");
+              return res.status(422).json({ message: "All input is required" });
             }
         
             const user = await UserModel.findOne({ email });
-            console.log("User found", user);
 
-            if (user && (await bcrypt.compare(password, user.passwordHash))) {
+            console.log(password, user.passwordHash)
+
+            if (user && (await bcrypt.compare(Object.toString(password), user.passwordHash))) {
                 const token = generateAccessToken(
                     { 
                         userId: user._id, 
@@ -31,7 +34,7 @@ class AuthController {
         
 
         catch (err) { 
-            console.log("Error during sign-in");
+            console.log("Error during sign-in", err);
             res.status(500).json({ message: "Error during sign-in" });
          }
     }
