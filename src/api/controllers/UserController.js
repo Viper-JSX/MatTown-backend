@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import UserModel from "../models/UserModel.js";
 
 class UserController {
-    getUser (req, res) {
+    async getUser (req, res) {
         const userId = req.params.id;
 
         if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -10,9 +10,13 @@ class UserController {
             return res.status(403).json({ message: "Invalid user id provided" });
         }
 
-        const user = UserModel.findById(userId);
-        console.log("getting user", userId)
-        res.json({ message: "Getting user", id: req.params.id });
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User with such id does not exist" });
+        }
+        
+        res.status(200).json({ message: "User successfully received", user });
     }
 
     getFollowers (req, res) {
