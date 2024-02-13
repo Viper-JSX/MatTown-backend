@@ -7,7 +7,7 @@ class UserController {
 
         if (!mongoose.Types.ObjectId.isValid(userId)) {
             console.log("Invalid user id");
-            return res.status(403).json({ message: "Invalid user id provided" });
+            return res.status(422).json({ message: "Invalid user id provided" });
         }
 
         const user = await UserModel.findById(userId);
@@ -15,7 +15,7 @@ class UserController {
         if (!user) {
             return res.status(404).json({ message: "User with such id does not exist" });
         }
-        
+
         res.status(200).json({ message: "User successfully received", user });
     }
 
